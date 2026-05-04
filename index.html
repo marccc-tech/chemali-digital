@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Chemali Digital — Custom web design built exclusively for electricians. Montreal-based. Conversion-obsessed.">
+  <title>Chemali Digital | Web Design for Electricians</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div id="cursor" class="cursor">
+    <div class="cursor-ring"></div>
+    <div class="cursor-h"></div>
+    <div class="cursor-v"></div>
+  </div>
+  <div id="cursorDot" class="cursor-dot"></div>
+
+  <!-- ═══════════════════════════════════════
+       INTRO SCREEN — Particle Animation
+  ═══════════════════════════════════════ -->
+  <div id="intro" class="intro">
+    <canvas id="particleCanvas"></canvas>
+    <div class="intro-overlay-grid"></div>
+    <div class="intro-scan-line" id="scanLine"></div>
+    <div class="intro-corners">
+      <div class="ic tl"></div>
+      <div class="ic tr"></div>
+      <div class="ic bl"></div>
+      <div class="ic br"></div>
+    </div>
+    <div class="intro-bottom-bar">
+      <div class="ib-left">
+        <span class="ib-pulse"></span>
+        <span class="ib-text mono">MONTREAL, CANADA</span>
+      </div>
+      <div class="ib-center mono" id="introTagline"></div>
+      <div class="ib-right mono" id="introTimer">00:00</div>
+    </div>
+    <div class="intro-loading-bar">
+      <div class="intro-loading-fill" id="introLoadingFill"></div>
+    </div>
+  </div>
+
+  <!-- Page Transition Wipe -->
+  <div id="pageTransition" class="page-transition">
+    <div class="pt-block-1"></div>
+    <div class="pt-block-2"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       MAIN APP
+  ═══════════════════════════════════════ -->
+  <div id="app" class="app">
+
+    <!-- NAVBAR -->
+    <nav id="navbar" class="navbar">
+      <div class="nav-inner">
+        <div class="nav-logo" data-nav="home">
+          <div class="logo-icon">
+            <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <filter id="lGlow"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+              <!-- Outer hex -->
+              <path d="M17 1.5 L30.5 9.25 L30.5 24.75 L17 32.5 L3.5 24.75 L3.5 9.25 Z"
+                    stroke="#00D4FF" stroke-width="1.2" fill="rgba(0,212,255,0.06)" filter="url(#lGlow)"/>
+              <!-- Inner hex -->
+              <path d="M17 7 L25.5 12 L25.5 22 L17 27 L8.5 22 L8.5 12 Z"
+                    stroke="#00D4FF" stroke-width="0.6" fill="none" opacity="0.35"/>
+              <!-- Lightning bolt -->
+              <path d="M20 5 L12.5 18 L17.5 18 L14 29 L21.5 16 L16.5 16 Z"
+                    fill="#00D4FF" filter="url(#lGlow)"/>
+              <!-- Corner sparks -->
+              <circle cx="3.5" cy="9.25" r="1.5" fill="#FF6B00" opacity="0.8"/>
+              <circle cx="30.5" cy="24.75" r="1.5" fill="#FF6B00" opacity="0.8"/>
+            </svg>
+          </div>
+          <div class="logo-wordmark">
+            <div class="lw-top">CHEMALI</div>
+            <div class="lw-bottom">DIGITAL</div>
+          </div>
+        </div>
+
+        <div class="nav-links" id="navLinks">
+          <a class="nav-link active" data-nav="home">
+            <span class="nl-num">01</span>HOME
+          </a>
+          <a class="nav-link" data-nav="about">
+            <span class="nl-num">02</span>ABOUT
+          </a>
+          <a class="nav-link" data-nav="contact">
+            <span class="nl-num">03</span>CONTACT
+          </a>
+        </div>
+
+        <div class="nav-right">
+          <div class="nav-status">
+            <span class="ns-dot"></span>
+            <span class="mono">ACCEPTING CLIENTS</span>
+          </div>
+          <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+      <div class="nav-progress-bar" id="navProgress"></div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu">
+      <div class="mm-inner">
+        <a class="mm-link" data-nav="home"><span>01</span> HOME</a>
+        <a class="mm-link" data-nav="about"><span>02</span> ABOUT</a>
+        <a class="mm-link" data-nav="contact"><span>03</span> CONTACT</a>
+      </div>
+    </div>
+
+    <!-- Ambient Background Canvas -->
+    <canvas id="bgCanvas" class="bg-canvas"></canvas>
+
+    <!-- ═══ PAGE: HOME ═══ -->
+    <section id="page-home" class="page active">
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-blueprint-grid"></div>
+
+        <div class="hero-content">
+          <div class="hero-eyebrow reveal">
+            <div class="eyebrow-line"></div>
+            <span class="mono">MONTREAL — EST. 2024</span>
+            <div class="eyebrow-line"></div>
+          </div>
+
+          <h1 class="hero-title reveal">
+            WE BUILD<br>
+            WEBSITES THAT<br>
+            <span class="ht-accent">WIN JOBS</span><br>
+            FOR ELECTRICIANS.
+          </h1>
+
+          <p class="hero-sub reveal">
+            100% custom. Zero templates. Built to convert<br class="d-only">
+            visitors into paying customers — every time.
+          </p>
+
+          <div class="hero-actions reveal">
+            <button class="btn-primary" data-nav="contact">
+              <span>GET YOUR WEBSITE</span>
+              <span class="ba-arrow">→</span>
+            </button>
+            <button class="btn-ghost" data-nav="about">
+              <span>SEE THE PROCESS</span>
+            </button>
+          </div>
+
+          <div class="hero-metrics reveal">
+            <div class="hm-item">
+              <div class="hm-val mono"><span class="counter" data-target="100">0</span><span class="hm-unit">%</span></div>
+              <div class="hm-label">CUSTOM BUILT</div>
+            </div>
+            <div class="hm-sep"></div>
+            <div class="hm-item">
+              <div class="hm-val mono">0</div>
+              <div class="hm-label">TEMPLATES USED</div>
+            </div>
+            <div class="hm-sep"></div>
+            <div class="hm-item">
+              <div class="hm-val mono">24H</div>
+              <div class="hm-label">RESPONSE TIME</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal">
+          <div class="circuit-art">
+            <svg viewBox="0 0 340 480" fill="none" xmlns="http://www.w3.org/2000/svg" class="circuit-svg">
+              <defs>
+                <filter id="glow-strong">
+                  <feGaussianBlur stdDeviation="4" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <filter id="glow-soft">
+                  <feGaussianBlur stdDeviation="2" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <linearGradient id="pathGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#00D4FF"/>
+                  <stop offset="100%" stop-color="#0066FF"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Main vertical spine -->
+              <path d="M170 10 L170 100 L100 100 L100 200 L170 200 L170 260 L100 360 L175 360 L175 470"
+                stroke="url(#pathGrad)" stroke-width="2.5" filter="url(#glow-strong)" class="cp-main"/>
+
+              <!-- Branch left -->
+              <path d="M100 150 L50 150 L50 250 L100 250"
+                stroke="#00D4FF" stroke-width="1.5" filter="url(#glow-soft)" opacity="0.7" class="cp-bl"/>
+
+              <!-- Branch right -->
+              <path d="M170 100 L240 100 L240 200 L170 200"
+                stroke="#00D4FF" stroke-width="1.5" filter="url(#glow-soft)" opacity="0.6" class="cp-br"/>
+
+              <!-- Far branch right -->
+              <path d="M240 150 L290 150 L290 250 L240 250"
+                stroke="#00D4FF" stroke-width="1" filter="url(#glow-soft)" opacity="0.35" class="cp-fr"/>
+
+              <!-- Bottom branches -->
+              <path d="M100 360 L50 360 L50 420"
+                stroke="#FF6B00" stroke-width="1.5" filter="url(#glow-soft)" opacity="0.8" class="cp-bot"/>
+              <path d="M175 360 L230 360 L230 420"
+                stroke="#00D4FF" stroke-width="1" filter="url(#glow-soft)" opacity="0.5" class="cp-bot2"/>
+
+              <!-- Horizontal connectors -->
+              <path d="M50 200 L100 200" stroke="#FF6B00" stroke-width="1" opacity="0.6"/>
+              <path d="M240 175 L290 175" stroke="#00D4FF" stroke-width="0.8" opacity="0.4"/>
+
+              <!-- Lightning bolt (center) -->
+              <path d="M185 30 L140 180 L175 180 L130 340"
+                stroke="#FF6B00" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"
+                filter="url(#glow-strong)" class="bolt-path"/>
+
+              <!-- Nodes -->
+              <circle cx="170" cy="100" r="5" fill="#00D4FF" filter="url(#glow-strong)" class="node"/>
+              <circle cx="170" cy="200" r="5" fill="#00D4FF" filter="url(#glow-strong)" class="node"/>
+              <circle cx="100" cy="100" r="3.5" fill="#00D4FF" filter="url(#glow-soft)" class="node" opacity="0.9"/>
+              <circle cx="100" cy="200" r="3.5" fill="#FF6B00" filter="url(#glow-strong)" class="node"/>
+              <circle cx="240" cy="100" r="3.5" fill="#00D4FF" filter="url(#glow-soft)" class="node" opacity="0.8"/>
+              <circle cx="240" cy="200" r="3.5" fill="#00D4FF" filter="url(#glow-soft)" class="node" opacity="0.8"/>
+              <circle cx="50" cy="150" r="3" fill="#FF6B00" filter="url(#glow-strong)" class="node"/>
+              <circle cx="290" cy="150" r="2.5" fill="#00D4FF" filter="url(#glow-soft)" class="node" opacity="0.6"/>
+              <circle cx="100" cy="360" r="4" fill="#FF6B00" filter="url(#glow-strong)" class="node"/>
+              <circle cx="175" cy="360" r="3.5" fill="#00D4FF" filter="url(#glow-strong)" class="node"/>
+
+              <!-- Measurement brackets -->
+              <path d="M310 80 L330 80 L330 420 L310 420" stroke="#00D4FF" stroke-width="0.8" opacity="0.3"/>
+              <path d="M10 80 L-10 80 L-10 420 L10 420" stroke="#00D4FF" stroke-width="0.8" opacity="0.2"/>
+
+              <!-- Labels -->
+              <text x="335" y="255" fill="#00D4FF" font-size="8" font-family="JetBrains Mono" opacity="0.5" transform="rotate(90, 335, 255)">CIRCUIT v2.4</text>
+            </svg>
+
+            <div class="ca-ring"></div>
+            <div class="ca-ring ca-ring-2"></div>
+            <div class="ca-ring ca-ring-3"></div>
+
+            <div class="ca-label-top mono">CUSTOM DESIGN</div>
+            <div class="ca-label-bottom mono">CONVERSION READY</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SERVICES -->
+      <div class="services" id="services">
+        <div class="services-header reveal">
+          <div class="sh-tag mono">[ 01 — SERVICES ]</div>
+          <h2 class="sh-title">WHAT YOU GET</h2>
+          <div class="sh-line"></div>
+        </div>
+
+        <div class="services-grid">
+          <div class="svc-card reveal" data-delay="0">
+            <div class="svc-num mono">01</div>
+            <div class="svc-icon-wrap">
+              <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+                <rect x="2" y="2" width="40" height="40" stroke="#00D4FF" stroke-width="1.5" rx="3"/>
+                <path d="M9 22 L17 14 L25 22 L33 14" stroke="#00D4FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 30 L17 22 L25 30 L33 22" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+              </svg>
+            </div>
+            <h3>CUSTOM DESIGN</h3>
+            <p>Built from scratch for your electrical business. No templates. No shortcuts. Every pixel placed to represent your brand the way it deserves.</p>
+            <div class="svc-badge">FULLY TAILORED</div>
+            <div class="svc-glow-effect"></div>
+            <div class="svc-corner tl"></div>
+            <div class="svc-corner br"></div>
+          </div>
+
+          <div class="svc-card featured reveal" data-delay="120">
+            <div class="svc-num mono">02</div>
+            <div class="svc-icon-wrap">
+              <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+                <circle cx="22" cy="22" r="18" stroke="#00D4FF" stroke-width="1.5"/>
+                <path d="M22 8 L22 22 L31 31" stroke="#FF6B00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="22" cy="22" r="3.5" fill="#00D4FF"/>
+                <circle cx="22" cy="8" r="2" fill="#FF6B00"/>
+              </svg>
+            </div>
+            <h3>LEAD GENERATION</h3>
+            <p>Every layout, CTA, and contact form is engineered with one goal: turning website visitors into booked electrical jobs on your calendar.</p>
+            <div class="svc-badge">CONVERSION FOCUSED</div>
+            <div class="svc-glow-effect"></div>
+            <div class="svc-corner tl"></div>
+            <div class="svc-corner br"></div>
+          </div>
+
+          <div class="svc-card reveal" data-delay="240">
+            <div class="svc-num mono">03</div>
+            <div class="svc-icon-wrap">
+              <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+                <rect x="4" y="8" width="36" height="26" rx="3" stroke="#00D4FF" stroke-width="1.5"/>
+                <rect x="10" y="14" width="24" height="14" rx="1.5" stroke="#00D4FF" stroke-width="1" opacity="0.5"/>
+                <line x1="16" y1="38" x2="28" y2="38" stroke="#00D4FF" stroke-width="2" stroke-linecap="round"/>
+                <line x1="22" y1="34" x2="22" y2="38" stroke="#00D4FF" stroke-width="2" stroke-linecap="round"/>
+                <path d="M14 21 L18 17 L22 21 L26 17 L30 21" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+              </svg>
+            </div>
+            <h3>MOBILE FIRST</h3>
+            <p>Most customers search on their phones. Your site will be lightning fast, perfectly responsive, and look stunning on every screen size.</p>
+            <div class="svc-badge">LIGHTNING FAST</div>
+            <div class="svc-glow-effect"></div>
+            <div class="svc-corner tl"></div>
+            <div class="svc-corner br"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA BANNER -->
+      <div class="cta-section reveal-section">
+        <div class="cta-bg-grid"></div>
+        <div class="cta-content">
+          <div class="cta-tag mono">[ READY? ]</div>
+          <h2 class="cta-headline">
+            MAKE YOUR<br>
+            <span class="cta-accent">COMPETITION</span><br>
+            LOOK AMATEUR.
+          </h2>
+          <p class="cta-sub">Your website is your best salesperson. Let's make sure it's actually working for you.</p>
+          <button class="btn-primary large" data-nav="contact">START YOUR PROJECT →</button>
+        </div>
+        <div class="cta-deco">
+          <div class="cd-ring"></div>
+          <div class="cd-ring cd-ring-2"></div>
+          <div class="cd-ring cd-ring-3"></div>
+          <div class="cd-bolt">⚡</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══ PAGE: ABOUT ═══ -->
+    <section id="page-about" class="page">
+      <div class="about-wrap">
+
+        <div class="about-hero">
+          <div class="section-tag mono reveal">[ 02 — ABOUT ]</div>
+          <h1 class="about-headline reveal">
+            NICHE DOWN.<br>
+            <span class="ah-accent">WIN BIG.</span>
+          </h1>
+          <p class="about-intro reveal">I'm Marc Chemali — a web designer from Montreal who bet everything on one industry.</p>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-left">
+            <div class="about-block reveal" data-delay="0">
+              <div class="ab-marker mono">◈ THE DECISION</div>
+              <p>After building websites across multiple industries, I noticed a pattern: electricians were getting burned. Generic templates that looked like every other contractor site. Slow websites that sent customers straight to the competition. Designs that forgot the most important thing — <strong>getting the phone to ring</strong>.</p>
+              <p>So I made a choice most designers are too afraid to make: I went all in on one niche. Electricians only.</p>
+            </div>
+
+            <div class="about-block reveal" data-delay="150">
+              <div class="ab-marker mono">◈ WHY THIS WORKS</div>
+              <p>Because I know exactly what a homeowner or contractor needs to see before they trust an electrician with their property. I know what makes an electrical business look credible online. I know what converts.</p>
+              <p>Every site I build carries that understanding. Every layout, headline, and call-to-action is informed by real knowledge of the electrical industry.</p>
+            </div>
+
+            <div class="about-block reveal" data-delay="300">
+              <div class="ab-marker mono">◈ THE BUILD</div>
+              <p>No page builders. No WordPress. No cookie-cutter themes. Pure custom code, built from the ground up for your business — fast, unique, and built to last.</p>
+            </div>
+
+            <div class="about-cta reveal" data-delay="400">
+              <button class="btn-primary" data-nav="contact">WORK WITH ME →</button>
+            </div>
+          </div>
+
+          <div class="about-right">
+            <div class="terminal-card reveal" data-delay="100">
+              <div class="tc-header">
+                <div class="tc-dots">
+                  <span style="background:#FF5F57"></span>
+                  <span style="background:#FEBC2E"></span>
+                  <span style="background:#28C840"></span>
+                </div>
+                <span class="tc-title mono">marc_chemali.profile</span>
+              </div>
+              <div class="tc-body mono" id="terminalBody">
+                <span class="tc-cursor" id="termCursor">█</span>
+              </div>
+            </div>
+
+            <div class="about-stats">
+              <div class="as-card reveal" data-delay="200">
+                <div class="asc-val mono">MTL</div>
+                <div class="asc-label">BASE OF OPERATIONS</div>
+              </div>
+              <div class="as-card reveal" data-delay="300">
+                <div class="asc-val mono">24H</div>
+                <div class="asc-label">MAX RESPONSE TIME</div>
+              </div>
+              <div class="as-card reveal" data-delay="400">
+                <div class="asc-val mono">∅</div>
+                <div class="asc-label">TEMPLATES USED</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PAGE: CONTACT ═══ -->
+    <section id="page-contact" class="page">
+      <div class="contact-wrap">
+
+        <div class="contact-header">
+          <div class="section-tag mono reveal">[ 03 — CONTACT ]</div>
+          <h1 class="contact-headline reveal">
+            LET'S BUILD<br>
+            <span class="ch-accent">SOMETHING</span><br>
+            LEGENDARY.
+          </h1>
+          <p class="contact-sub reveal">Tell me about your electrical business. No pressure, no sales pitch — just a real conversation about what your website could do for you.</p>
+        </div>
+
+        <div class="contact-body">
+          <div class="contact-info reveal">
+            <div class="ci-card">
+              <div class="ci-label mono">LOCATION</div>
+              <div class="ci-val">Montreal, Quebec, Canada</div>
+            </div>
+            <div class="ci-card">
+              <div class="ci-label mono">EMAIL</div>
+              <div class="ci-val">mchemali01@gmail.com</div>
+            </div>
+            <div class="ci-card">
+              <div class="ci-label mono">SPECIALTY</div>
+              <div class="ci-val">Electrician Web Design</div>
+            </div>
+            <div class="ci-card">
+              <div class="ci-label mono">RESPONSE TIME</div>
+              <div class="ci-val">Within 24 Hours</div>
+            </div>
+            <div class="ci-status">
+              <span class="cis-dot"></span>
+              <span>Currently accepting new clients</span>
+            </div>
+          </div>
+
+          <form id="contactForm" class="contact-form reveal" data-delay="100" novalidate>
+            <!--
+            ═══════════════════════════════════════════════
+            CONTACT FORM SETUP (Web3Forms — FREE, no login)
+            ═══════════════════════════════════════════════
+            1. Go to https://web3forms.com/
+            2. Enter: mchemali01@gmail.com
+            3. Click "Create Access Key"
+            4. Replace "43012144-61a9-42f6-9ffe-bab1c71afe8f" below with the key you receive
+            5. That's it. Forms will arrive in your inbox.
+            ═══════════════════════════════════════════════
+            -->
+            <input type="hidden" name="access_key" value="43012144-61a9-42f6-9ffe-bab1c71afe8f">
+            <input type="hidden" name="subject" value="New Website Inquiry — Chemali Digital">
+            <input type="hidden" name="redirect" value="false">
+            <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1">
+
+            <div class="form-row">
+              <div class="form-field">
+                <label class="ff-label mono">FIRST NAME</label>
+                <input type="text" name="first_name" class="ff-input" placeholder="John" required autocomplete="given-name">
+                <div class="ff-line"></div>
+              </div>
+              <div class="form-field">
+                <label class="ff-label mono">LAST NAME</label>
+                <input type="text" name="last_name" class="ff-input" placeholder="Smith" required autocomplete="family-name">
+                <div class="ff-line"></div>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label class="ff-label mono">EMAIL ADDRESS</label>
+              <input type="email" name="email" class="ff-input" placeholder="john@smithelectric.com" required autocomplete="email">
+              <div class="ff-line"></div>
+            </div>
+
+            <div class="form-field">
+              <label class="ff-label mono">YOUR MESSAGE</label>
+              <textarea name="message" class="ff-input ff-textarea" placeholder="Tell me about your electrical business — what you need, what you want your website to do for you, and where you're based..." required rows="5"></textarea>
+              <div class="ff-line"></div>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-primary full">
+              <span id="btnText">SEND MESSAGE</span>
+              <span id="btnArrow" class="ba-arrow">→</span>
+              <span id="btnLoader" class="btn-loader" style="display:none">◌</span>
+            </button>
+
+            <div id="formSuccess" class="form-msg success" style="display:none">
+              <span class="fm-icon">✓</span>
+              <span>Message sent. I'll get back to you within 24 hours.</span>
+            </div>
+            <div id="formError" class="form-msg error" style="display:none">
+              <span class="fm-icon">✗</span>
+              <span>Something went wrong. Email me directly: mchemali01@gmail.com</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-grid"></div>
+      <div class="footer-inner">
+        <div class="fi-logo" data-nav="home">
+          <svg width="22" height="22" viewBox="0 0 34 34" fill="none" style="margin-right:8px;vertical-align:middle">
+            <path d="M17 1.5 L30.5 9.25 L30.5 24.75 L17 32.5 L3.5 24.75 L3.5 9.25 Z" stroke="#00D4FF" stroke-width="1.5" fill="rgba(0,212,255,0.06)"/>
+            <path d="M20 5 L12.5 18 L17.5 18 L14 29 L21.5 16 L16.5 16 Z" fill="#00D4FF"/>
+          </svg>
+          <span>CHEMALI</span><span class="accent"> DIGITAL</span>
+        </div>
+        <p class="fi-sub">Custom Web Design for Electricians — Montreal</p>
+        <div class="fi-nav">
+          <a data-nav="home">HOME</a>
+          <span>·</span>
+          <a data-nav="about">ABOUT</a>
+          <span>·</span>
+          <a data-nav="contact">CONTACT</a>
+        </div>
+        <div class="fi-divider"></div>
+        <p class="fi-copy mono">© 2025 CHEMALI DIGITAL. ALL RIGHTS RESERVED.</p>
+      </div>
+    </footer>
+
+  </div><!-- end #app -->
+
+  <script src="js/particles.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
