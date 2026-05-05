@@ -1,0 +1,214 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <filter id="glow-strong">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-soft">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-text">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="bolt-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00D4FF"/>
+      <stop offset="100%" stop-color="#0066FF"/>
+    </linearGradient>
+    <linearGradient id="line-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00D4FF" stop-opacity="0"/>
+      <stop offset="30%" stop-color="#00D4FF" stop-opacity="0.8"/>
+      <stop offset="70%" stop-color="#00D4FF" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#00D4FF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="fade-right" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="60%" stop-color="#040C18" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#040C18" stop-opacity="1"/>
+    </linearGradient>
+    <clipPath id="bounds">
+      <rect width="1200" height="630"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#040C18"/>
+
+  <!-- Blueprint grid -->
+  <g clip-path="url(#bounds)" opacity="0.5">
+    <!-- Vertical lines -->
+    <g stroke="rgba(0,212,255,0.04)" stroke-width="1">
+      <line x1="60"  y1="0" x2="60"  y2="630"/>
+      <line x1="120" y1="0" x2="120" y2="630"/>
+      <line x1="180" y1="0" x2="180" y2="630"/>
+      <line x1="240" y1="0" x2="240" y2="630"/>
+      <line x1="300" y1="0" x2="300" y2="630"/>
+      <line x1="360" y1="0" x2="360" y2="630"/>
+      <line x1="420" y1="0" x2="420" y2="630"/>
+      <line x1="480" y1="0" x2="480" y2="630"/>
+      <line x1="540" y1="0" x2="540" y2="630"/>
+      <line x1="600" y1="0" x2="600" y2="630"/>
+      <line x1="660" y1="0" x2="660" y2="630"/>
+      <line x1="720" y1="0" x2="720" y2="630"/>
+      <line x1="780" y1="0" x2="780" y2="630"/>
+      <line x1="840" y1="0" x2="840" y2="630"/>
+      <line x1="900" y1="0" x2="900" y2="630"/>
+      <line x1="960" y1="0" x2="960" y2="630"/>
+      <line x1="1020" y1="0" x2="1020" y2="630"/>
+      <line x1="1080" y1="0" x2="1080" y2="630"/>
+      <line x1="1140" y1="0" x2="1140" y2="630"/>
+    </g>
+    <!-- Horizontal lines -->
+    <g stroke="rgba(0,212,255,0.04)" stroke-width="1">
+      <line x1="0" y1="60"  x2="1200" y2="60"/>
+      <line x1="0" y1="120" x2="1200" y2="120"/>
+      <line x1="0" y1="180" x2="1200" y2="180"/>
+      <line x1="0" y1="240" x2="1200" y2="240"/>
+      <line x1="0" y1="300" x2="1200" y2="300"/>
+      <line x1="0" y1="360" x2="1200" y2="360"/>
+      <line x1="0" y1="420" x2="1200" y2="420"/>
+      <line x1="0" y1="480" x2="1200" y2="480"/>
+      <line x1="0" y1="540" x2="1200" y2="540"/>
+    </g>
+  </g>
+
+  <!-- Corner bracket decorations -->
+  <g stroke="#00D4FF" stroke-width="2" fill="none" opacity="0.5">
+    <path d="M40 40 L40 90 M40 40 L90 40"/>
+    <path d="M1160 40 L1160 90 M1160 40 L1110 40"/>
+    <path d="M40 590 L40 540 M40 590 L90 590"/>
+    <path d="M1160 590 L1160 540 M1160 590 L1110 590"/>
+  </g>
+
+  <!-- Measurement marks top -->
+  <g fill="none" stroke="rgba(0,212,255,0.2)" stroke-width="0.8">
+    <line x1="60" y1="20" x2="60" y2="28"/>
+    <line x1="120" y1="20" x2="120" y2="28"/>
+    <line x1="180" y1="20" x2="180" y2="28"/>
+    <line x1="240" y1="20" x2="240" y2="28"/>
+    <line x1="300" y1="20" x2="300" y2="28"/>
+    <line x1="360" y1="20" x2="360" y2="28"/>
+    <line x1="420" y1="20" x2="420" y2="28"/>
+  </g>
+
+  <!-- Subtle orange glow top-left -->
+  <ellipse cx="120" cy="100" rx="200" ry="120" fill="#FF6B00" opacity="0.04"/>
+
+  <!-- Cyan ambient glow right -->
+  <ellipse cx="1050" cy="315" rx="280" ry="280" fill="#00D4FF" opacity="0.03"/>
+
+  <!-- ── LOGO MARK ── -->
+  <g transform="translate(90, 180)">
+    <!-- Outer hexagon large -->
+    <path d="M90 4 L164 47 L164 133 L90 176 L16 133 L16 47 Z"
+          stroke="#00D4FF" stroke-width="2.5" fill="rgba(0,212,255,0.05)" filter="url(#glow-soft)"/>
+    <!-- Inner hexagon -->
+    <path d="M90 26 L146 58 L146 122 L90 154 L34 122 L34 58 Z"
+          stroke="#00D4FF" stroke-width="1" fill="none" opacity="0.25"/>
+    <!-- Lightning bolt -->
+    <path d="M107 8 L64 95 L92 95 L75 172 L116 85 L88 85 Z"
+          fill="url(#bolt-grad)" filter="url(#glow-strong)"/>
+    <!-- Orange sparks -->
+    <circle cx="16"  cy="47"  r="5" fill="#FF6B00" opacity="0.9" filter="url(#glow-soft)"/>
+    <circle cx="164" cy="133" r="5" fill="#FF6B00" opacity="0.9" filter="url(#glow-soft)"/>
+    <circle cx="16"  cy="133" r="3" fill="#00D4FF" opacity="0.6"/>
+    <circle cx="164" cy="47"  r="3" fill="#00D4FF" opacity="0.6"/>
+  </g>
+
+  <!-- ── WORDMARK ── -->
+  <!-- CHEMALI -->
+  <text x="305" y="285"
+        font-family="'Orbitron', 'Rajdhani', 'Arial Black', sans-serif"
+        font-size="96" font-weight="900"
+        letter-spacing="-2"
+        fill="#E8F4FD">CHEMALI</text>
+
+  <!-- DIGITAL accent line -->
+  <text x="308" y="358"
+        font-family="'Orbitron', 'Rajdhani', 'Arial Black', sans-serif"
+        font-size="42" font-weight="400"
+        letter-spacing="22"
+        fill="#00D4FF" opacity="0.9">DIGITAL</text>
+
+  <!-- Divider line -->
+  <rect x="305" y="378" width="560" height="1.5" fill="url(#line-grad-h)" opacity="0.6"/>
+
+  <!-- Tagline -->
+  <text x="308" y="422"
+        font-family="'JetBrains Mono', 'Courier New', monospace"
+        font-size="18" font-weight="400"
+        letter-spacing="3"
+        fill="#B8D4E8" opacity="0.8">CUSTOM WEB DESIGN FOR ELECTRICIANS</text>
+
+  <!-- Location tag -->
+  <text x="308" y="460"
+        font-family="'JetBrains Mono', 'Courier New', monospace"
+        font-size="13" font-weight="400"
+        letter-spacing="4"
+        fill="#6B8FA8">◈ MONTREAL, CANADA — EST. 2024</text>
+
+  <!-- ── STATS ROW ── -->
+  <g transform="translate(305, 500)">
+    <!-- Stat 1 -->
+    <rect x="0" y="0" width="160" height="80" fill="rgba(0,212,255,0.04)" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+    <text x="80" y="32" font-family="'JetBrains Mono', monospace" font-size="26" font-weight="700" fill="#00D4FF" text-anchor="middle">100%</text>
+    <text x="80" y="56" font-family="'Orbitron', sans-serif" font-size="9" letter-spacing="3" fill="#6B8FA8" text-anchor="middle">CUSTOM BUILT</text>
+
+    <!-- Stat 2 -->
+    <rect x="172" y="0" width="160" height="80" fill="rgba(0,212,255,0.04)" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+    <text x="252" y="32" font-family="'JetBrains Mono', monospace" font-size="26" font-weight="700" fill="#00D4FF" text-anchor="middle">ZERO</text>
+    <text x="252" y="56" font-family="'Orbitron', sans-serif" font-size="9" letter-spacing="3" fill="#6B8FA8" text-anchor="middle">TEMPLATES</text>
+
+    <!-- Stat 3 -->
+    <rect x="344" y="0" width="160" height="80" fill="rgba(0,212,255,0.04)" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+    <text x="424" y="32" font-family="'JetBrains Mono', monospace" font-size="26" font-weight="700" fill="#FF6B00" text-anchor="middle">24H</text>
+    <text x="424" y="56" font-family="'Orbitron', sans-serif" font-size="9" letter-spacing="3" fill="#6B8FA8" text-anchor="middle">RESPONSE</text>
+  </g>
+
+  <!-- ── RIGHT SIDE circuit decoration ── -->
+  <g transform="translate(930, 80)" opacity="0.35" clip-path="url(#bounds)">
+    <!-- Circuit paths -->
+    <path d="M100 0 L100 80 L40 80 L40 180 L100 180 L100 250 L40 320 L105 320 L105 420"
+          stroke="url(#bolt-grad)" stroke-width="2" fill="none"/>
+    <path d="M40 130 L0 130 L0 230 L40 230"
+          stroke="#00D4FF" stroke-width="1.5" fill="none" opacity="0.7"/>
+    <path d="M100 80 L160 80 L160 180 L100 180"
+          stroke="#00D4FF" stroke-width="1.5" fill="none" opacity="0.5"/>
+    <!-- Bolt -->
+    <path d="M118 10 L72 150 L102 150 L84 300"
+          stroke="#FF6B00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <!-- Nodes -->
+    <circle cx="100" cy="80"  r="5" fill="#00D4FF"/>
+    <circle cx="100" cy="180" r="5" fill="#00D4FF"/>
+    <circle cx="40"  cy="130" r="4" fill="#FF6B00"/>
+    <circle cx="40"  cy="320" r="4" fill="#FF6B00"/>
+    <circle cx="105" cy="320" r="4" fill="#00D4FF"/>
+    <circle cx="160" cy="80"  r="3" fill="#00D4FF" opacity="0.7"/>
+    <!-- Labels -->
+    <text x="185" y="135" font-family="'JetBrains Mono', monospace" font-size="8" fill="#00D4FF" opacity="0.6" transform="rotate(90,185,135)">CIRCUIT v2.4</text>
+  </g>
+
+  <!-- Fade overlay on far right -->
+  <rect x="1050" y="0" width="150" height="630" fill="url(#fade-right)"/>
+
+  <!-- Bottom bar -->
+  <rect x="0" y="610" width="1200" height="2" fill="url(#line-grad-h)" opacity="0.4"/>
+
+  <!-- Bottom mono text -->
+  <text x="60" y="626"
+        font-family="'JetBrains Mono', 'Courier New', monospace"
+        font-size="10" letter-spacing="3"
+        fill="#6B8FA8" opacity="0.6">CHEMALIDIGITAL.COM</text>
+
+  <text x="1140" y="626"
+        font-family="'JetBrains Mono', 'Courier New', monospace"
+        font-size="10" letter-spacing="2"
+        fill="#6B8FA8" opacity="0.6" text-anchor="end">WEB DESIGN FOR ELECTRICIANS</text>
+
+  <!-- Status dot + accepting clients -->
+  <circle cx="960" cy="620" r="4" fill="#00FF88" opacity="0.8"/>
+  <text x="970" y="624"
+        font-family="'JetBrains Mono', monospace"
+        font-size="10" letter-spacing="2"
+        fill="#00FF88" opacity="0.7">ACCEPTING CLIENTS</text>
+</svg>

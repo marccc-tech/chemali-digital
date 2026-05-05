@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <radialGradient id="bg-grad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#071525"/>
+      <stop offset="100%" stop-color="#040C18"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="32" height="32" fill="url(#bg-grad)" rx="4"/>
+
+  <!-- Outer hexagon -->
+  <path d="M16 1.5 L28.5 8.5 L28.5 23.5 L16 30.5 L3.5 23.5 L3.5 8.5 Z"
+        stroke="#00D4FF" stroke-width="1.2" fill="rgba(0,212,255,0.06)" filter="url(#glow)"/>
+
+  <!-- Inner hexagon -->
+  <path d="M16 6.5 L24 11.25 L24 20.75 L16 25.5 L8 20.75 L8 11.25 Z"
+        stroke="#00D4FF" stroke-width="0.6" fill="none" opacity="0.3"/>
+
+  <!-- Lightning bolt -->
+  <path d="M19 3.5 L11.5 16.5 L16.5 16.5 L13 28 L20.5 15 L15.5 15 Z"
+        fill="#00D4FF" filter="url(#glow)"/>
+
+  <!-- Corner sparks -->
+  <circle cx="3.5" cy="8.5"  r="1.4" fill="#FF6B00" opacity="0.85"/>
+  <circle cx="28.5" cy="23.5" r="1.4" fill="#FF6B00" opacity="0.85"/>
+</svg>
