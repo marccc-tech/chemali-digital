@@ -429,7 +429,7 @@
     document.addEventListener('mouseup',   () => cursor.classList.remove('clicking'));
 
     // Hover on interactive elements
-    document.querySelectorAll('a, button, [data-nav], .svc-card, .nav-link').forEach(el => {
+    document.querySelectorAll('a, button, [data-nav], .svc-card, .why-card, .nav-link').forEach(el => {
       el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
       el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
     });

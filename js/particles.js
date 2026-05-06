@@ -452,224 +452,235 @@ class ParticleSystem {
 
 
 /* ═══════════════════════════════════════════════════════════════
-   BACKGROUND: WARP VORTEX TUNNEL
-   Rotating perspective rectangles + hyperspace streaks
-   Speed + rotation ramp on scroll
+   BACKGROUND: ELECTRIC CIRCUIT NETWORK
+   Sparse node graph with traveling current pulses + parallax drift.
+   Static topology computed once per resize -> heavy work is O(N+E)
+   on init only. Per-frame cost is constant (~30 nodes, ~70 edges,
+   ~6-12 active pulses) so it stays smooth on every device.
    ═══════════════════════════════════════════════════════════════ */
 class BackgroundParticles {
   constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
     if (!this.canvas) return;
     this.ctx = this.canvas.getContext('2d');
+    this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
-    this.frame     = 0;
-    this.scrollY   = 0;
-    this.scrollVel = 0;
-    this.lastSY    = 0;
-    this.mouse     = { x: -9999, y: -9999 };
-    this.warpers   = [];
-    this.floaters  = [];
+    this.frame    = 0;
+    this.mouse    = { x: -9999, y: -9999 };
+    this.parallax = { x: 0, y: 0 };
+
+    this.nodes  = [];
+    this.edges  = [];
+    this.pulses = [];
 
     this._raf   = null;
     this._bound = this._tick.bind(this);
+    this._reduceMotion = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     this._resize();
-    window.addEventListener('resize', () => { this._resize(); this._initFloaters(); });
-    window.addEventListener('scroll', () => {
-      const dy = window.scrollY - this.lastSY;
-      this.scrollVel = Math.min(Math.abs(dy) * 0.9, 35);
-      this.lastSY = this.scrollY = window.scrollY;
+    this._buildNetwork();
+
+    let resizeT;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeT);
+      resizeT = setTimeout(() => { this._resize(); this._buildNetwork(); }, 150);
+    });
+    window.addEventListener('mousemove', e => {
+      this.mouse.x = e.clientX; this.mouse.y = e.clientY;
     }, { passive: true });
-    window.addEventListener('mousemove', e => { this.mouse.x = e.clientX; this.mouse.y = e.clientY; });
   }
 
-  _resize() { this.canvas.width = window.innerWidth; this.canvas.height = window.innerHeight; }
+  _resize() {
+    const W = window.innerWidth, H = window.innerHeight;
+    this.canvas.width  = W * this.dpr;
+    this.canvas.height = H * this.dpr;
+    this.canvas.style.width  = W + 'px';
+    this.canvas.style.height = H + 'px';
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    this.W = W; this.H = H;
+  }
 
-  start() { this._initFloaters(); this._initWarpers(); this._raf = requestAnimationFrame(this._bound); }
+  _buildNetwork() {
+    const W = this.W, H = this.H;
+    const target = Math.max(14, Math.min(30, Math.floor((W * H) / 75000)));
+    const minDist = Math.min(W, H) * 0.13;
 
-  _initFloaters() {
-    const W = this.canvas.width, H = this.canvas.height;
-    const n = Math.min(Math.floor(W * H / 22000), 70);
-    this.floaters = [];
-    for (let i = 0; i < n; i++) {
-      this.floaters.push({
-        x: Math.random() * W, y: Math.random() * H,
-        vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
-        r: Math.random() * 1.4 + 0.4,
-        a: Math.random() * 0.18 + 0.04,
-        ph: Math.random() * Math.PI * 2,
-      });
+    this.nodes = [];
+    let tries = 0;
+    while (this.nodes.length < target && tries < target * 60) {
+      tries++;
+      const x = 40 + Math.random() * (W - 80);
+      const y = 40 + Math.random() * (H - 80);
+      let ok = true;
+      for (const n of this.nodes) {
+        if (Math.hypot(n.x - x, n.y - y) < minDist) { ok = false; break; }
+      }
+      if (ok) {
+        this.nodes.push({
+          x, y,
+          phase:  Math.random() * Math.PI * 2,
+          accent: Math.random() > 0.85
+        });
+      }
+    }
+
+    // Connect each node to 2-3 nearest neighbors (deduped)
+    this.edges = [];
+    const seen = new Set();
+    for (let i = 0; i < this.nodes.length; i++) {
+      const dists = [];
+      for (let j = 0; j < this.nodes.length; j++) {
+        if (i === j) continue;
+        const d = Math.hypot(this.nodes[i].x - this.nodes[j].x,
+                             this.nodes[i].y - this.nodes[j].y);
+        dists.push({ j, d });
+      }
+      dists.sort((a, b) => a.d - b.d);
+      const k = Math.random() > 0.55 ? 2 : 3;
+      for (let n = 0; n < Math.min(k, dists.length); n++) {
+        const j = dists[n].j;
+        const key = i < j ? `${i}-${j}` : `${j}-${i}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        this.edges.push({ a: i, b: j, len: dists[n].d });
+      }
+    }
+
+    this.pulses = [];
+    for (let i = 0; i < 4; i++) this._spawnPulse(true);
+  }
+
+  _spawnPulse(stagger = false) {
+    if (!this.edges.length) return;
+    const e = this.edges[Math.floor(Math.random() * this.edges.length)];
+    this.pulses.push({
+      edge:    e,
+      t:       stagger ? Math.random() : 0,
+      speed:   0.005 + Math.random() * 0.008,
+      reverse: Math.random() > 0.5,
+      orange:  this.nodes[e.a].accent || this.nodes[e.b].accent || Math.random() > 0.82
+    });
+  }
+
+  _burstFrom(idx) {
+    for (const e of this.edges) {
+      if (e.a === idx || e.b === idx) {
+        this.pulses.push({
+          edge:    e,
+          t:       0,
+          speed:   0.013,
+          reverse: e.b === idx,
+          orange:  true
+        });
+      }
     }
   }
 
-  _initWarpers() {
-    this.warpers = [];
-    for (let i = 0; i < 95; i++) this._spawnWarper(true);
+  start() {
+    if (this._reduceMotion) { this._renderStatic(); return; }
+    this._raf = requestAnimationFrame(this._bound);
   }
+  stop() { if (this._raf) cancelAnimationFrame(this._raf); this._raf = null; }
 
-  _spawnWarper(rand = false) {
-    const W = this.canvas.width, H = this.canvas.height;
-    const maxR  = Math.hypot(W, H) * 0.6;
-    const angle = Math.random() * Math.PI * 2;
-    const dist  = rand ? Math.random() * maxR : 3;
-    this.warpers.push({
-      angle, dist,
-      baseSpeed: 0.8 + Math.random() * 2.4,
-      r: Math.random() * 1.2 + 0.4,
-      maxR,
-      px: W / 2 + Math.cos(angle) * dist,
-      py: H / 2 + Math.sin(angle) * dist,
-      color:   Math.random() > 0.88 ? 'orange' : 'cyan',
-      opacity: rand ? Math.random() * 0.5 : 0,
-    });
+  _renderStatic() {
+    const ctx = this.ctx;
+    ctx.clearRect(0, 0, this.W, this.H);
+    this._drawEdges(ctx);
+    this._drawNodes(ctx, true);
   }
 
   _tick() {
     this._raf = requestAnimationFrame(this._bound);
     this.frame++;
-    this.scrollVel *= 0.92;
+
+    if (this.mouse.x > -9000) {
+      const tx = (this.mouse.x - this.W / 2) * 0.012;
+      const ty = (this.mouse.y - this.H / 2) * 0.012;
+      this.parallax.x += (tx - this.parallax.x) * 0.04;
+      this.parallax.y += (ty - this.parallax.y) * 0.04;
+    }
 
     const ctx = this.ctx;
-    const W = this.canvas.width, H = this.canvas.height;
-    const cx = W / 2, cy = H / 2;
-
-    ctx.clearRect(0, 0, W, H);
-    this._drawTunnel(ctx, W, H, cx, cy);
-    this._drawSpokes(ctx, W, H, cx, cy);
-    this._updateWarpers(ctx, cx, cy);
-    this._updateFloaters(ctx, W, H);
-    this._drawFloaterLinks(ctx);
-  }
-
-  _drawTunnel(ctx, W, H, cx, cy) {
-    const sv    = this.scrollVel;
-    const tSpd  = 0.0015 + sv * 0.006;
-    const t     = this.frame * tSpd;
-    const rotB  = this.frame * 0.0003;
-    const rot   = rotB + sv * 0.0015;
-    const asp   = H / W;
-    const LAYER = 28;
+    ctx.clearRect(0, 0, this.W, this.H);
 
     ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(rot);
-
-    for (let i = 0; i < LAYER; i++) {
-      const raw = (i / LAYER + t * 0.3) % 1;
-      const maxS = Math.max(W, H) * 1.6;
-      const hw   = raw * maxS * 0.5;
-      const hh   = hw * asp;
-
-      let alpha;
-      if      (raw < 0.06) alpha = (raw / 0.06) * 0.22;
-      else if (raw > 0.65) alpha = ((1 - raw) / 0.35) * 0.22;
-      else                  alpha = 0.22;
-
-      const gb = Math.floor(180 + raw * 75);
-      ctx.strokeStyle = `rgba(0,${gb},255,${alpha})`;
-      ctx.lineWidth   = raw < 0.12 ? 0.3 : 0.4 + raw * 1.2;
-      ctx.strokeRect(-hw, -hh, hw * 2, hh * 2);
-
-      if (i % 4 === 0 && raw > 0.1 && raw < 0.9) {
-        ctx.strokeStyle = `rgba(0,212,255,${alpha * 1.8})`;
-        ctx.lineWidth = 0.2;
-        ctx.strokeRect(-hw + 1, -hh + 1, hw * 2 - 2, hh * 2 - 2);
-      }
-    }
+    ctx.translate(this.parallax.x, this.parallax.y);
+    this._drawEdges(ctx);
+    this._drawNodes(ctx, false);
+    this._drawPulses(ctx);
     ctx.restore();
 
-    // Periodic flash
-    if (this.frame % 240 < 4) {
-      const fa = (4 - this.frame % 240) / 4 * 0.07;
-      ctx.fillStyle = `rgba(0,212,255,${fa})`;
-      ctx.fillRect(0, 0, W, H);
-    }
-    // Scroll burst
-    if (sv > 8) {
-      ctx.fillStyle = `rgba(0,212,255,${Math.min(sv / 180, 0.09)})`;
-      ctx.fillRect(0, 0, W, H);
+    if (this.frame % 22 === 0 && this.pulses.length < 14) this._spawnPulse();
+    if (this.frame % 420 === 0 && this.nodes.length) {
+      this._burstFrom(Math.floor(Math.random() * this.nodes.length));
     }
   }
 
-  _drawSpokes(ctx, W, H, cx, cy) {
-    const rot = this.frame * 0.0003 + this.scrollVel * 0.0015;
-    for (let i = 0; i < 12; i++) {
-      const angle = (i / 12) * Math.PI * 2 + rot;
-      const ex    = cx + Math.cos(angle) * Math.hypot(W, H);
-      const ey    = cy + Math.sin(angle) * Math.hypot(W, H);
-      const g     = ctx.createLinearGradient(cx, cy, ex, ey);
-      g.addColorStop(0,   'rgba(0,212,255,0.0)');
-      g.addColorStop(0.05,'rgba(0,212,255,0.12)');
-      g.addColorStop(0.4, 'rgba(0,212,255,0.04)');
-      g.addColorStop(1,   'rgba(0,212,255,0.0)');
-      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ex, ey);
-      ctx.strokeStyle = g; ctx.lineWidth = 0.6; ctx.stroke();
+  _drawEdges(ctx) {
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(0, 212, 255, 0.09)';
+    ctx.lineWidth = 0.6;
+    ctx.beginPath();
+    for (const e of this.edges) {
+      const a = this.nodes[e.a], b = this.nodes[e.b];
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+    }
+    ctx.stroke();
+  }
+
+  _drawNodes(ctx, isStatic) {
+    for (const n of this.nodes) {
+      const pulse = isStatic
+        ? 0.5
+        : 0.5 + 0.5 * Math.sin(this.frame * 0.022 + n.phase);
+      const r = 1.2 + pulse * 0.7;
+      const col = n.accent ? '255,107,0' : '0,212,255';
+
+      const grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, r * 7);
+      grad.addColorStop(0,   `rgba(${col},${0.32 + pulse * 0.22})`);
+      grad.addColorStop(0.4, `rgba(${col},0.06)`);
+      grad.addColorStop(1,   `rgba(${col},0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(n.x, n.y, r * 7, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = n.accent ? '#FF6B00' : '#00D4FF';
+      ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2); ctx.fill();
     }
   }
 
-  _updateWarpers(ctx, cx, cy) {
-    while (this.warpers.length < 95) this._spawnWarper(false);
-    const sm = 1 + this.scrollVel * 0.25;
+  _drawPulses(ctx) {
+    const next = [];
+    for (const p of this.pulses) {
+      p.t += p.speed;
+      if (p.t >= 1) continue;
+      const a = this.nodes[p.edge.a], b = this.nodes[p.edge.b];
+      const start = p.reverse ? b : a;
+      const end   = p.reverse ? a : b;
+      const x = start.x + (end.x - start.x) * p.t;
+      const y = start.y + (end.y - start.y) * p.t;
+      const trailT = Math.max(0, p.t - 0.20);
+      const tx = start.x + (end.x - start.x) * trailT;
+      const ty = start.y + (end.y - start.y) * trailT;
 
-    this.warpers = this.warpers.filter(p => {
-      if (p.opacity < 0.8) p.opacity = Math.min(0.8, p.opacity + 0.015);
-      const prevX = p.px, prevY = p.py;
-      p.dist += p.baseSpeed * sm;
-      p.px = cx + Math.cos(p.angle) * p.dist;
-      p.py = cy + Math.sin(p.angle) * p.dist;
-      if (p.dist > p.maxR) return false;
+      const col = p.orange ? '255,107,0' : '0,212,255';
+      const grad = ctx.createLinearGradient(tx, ty, x, y);
+      grad.addColorStop(0, `rgba(${col},0)`);
+      grad.addColorStop(1, `rgba(${col},0.85)`);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(x, y); ctx.stroke();
 
-      // Streak trail
-      const tx = cx + Math.cos(p.angle) * Math.max(2, p.dist - 22 * sm);
-      const ty = cy + Math.sin(p.angle) * Math.max(2, p.dist - 22 * sm);
-      ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(p.px, p.py);
-      const pct = p.dist / p.maxR;
-      const gb  = Math.floor(180 + pct * 75);
-      ctx.strokeStyle = p.color === 'orange'
-        ? `rgba(255,107,0,${p.opacity * 0.6})`
-        : `rgba(0,${gb},255,${p.opacity * 0.6})`;
-      ctx.lineWidth = p.r * (0.5 + pct * 1.5); ctx.stroke();
+      ctx.shadowColor = p.orange ? '#FF6B00' : '#00D4FF';
+      ctx.shadowBlur  = 10;
+      ctx.fillStyle = p.orange ? '#FF6B00' : '#00D4FF';
+      ctx.beginPath(); ctx.arc(x, y, 1.9, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0;
 
-      // Head dot
-      ctx.beginPath(); ctx.arc(p.px, p.py, p.r * 0.8, 0, Math.PI * 2);
-      ctx.fillStyle = p.color === 'orange'
-        ? `rgba(255,107,0,${p.opacity})`
-        : `rgba(0,212,255,${p.opacity})`;
-      ctx.fill();
-      return true;
-    });
-  }
-
-  _updateFloaters(ctx, W, H) {
-    this.floaters.forEach(p => {
-      const mdx = p.x - this.mouse.x, mdy = p.y - this.mouse.y;
-      const md  = Math.hypot(mdx, mdy);
-      if (md < 180 && md > 0) { const f = ((180 - md) / 180) * 0.04; p.vx += (mdx / md) * f; p.vy += (mdy / md) * f; }
-      p.vx *= 0.99; p.vy *= 0.99;
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
-      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
-      const pulse = 0.5 + 0.5 * Math.sin(this.frame * 0.018 + p.ph);
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = '#00D4FF';
-      ctx.globalAlpha = p.a * pulse; ctx.fill(); ctx.globalAlpha = 1;
-    });
-  }
-
-  _drawFloaterLinks(ctx) {
-    for (let i = 0; i < this.floaters.length; i++) {
-      for (let j = i + 1; j < this.floaters.length; j++) {
-        const dx = this.floaters[i].x - this.floaters[j].x;
-        if (Math.abs(dx) > 100) continue;
-        const d = Math.hypot(dx, this.floaters[i].y - this.floaters[j].y);
-        if (d > 100) continue;
-        ctx.beginPath();
-        ctx.moveTo(this.floaters[i].x, this.floaters[i].y);
-        ctx.lineTo(this.floaters[j].x, this.floaters[j].y);
-        ctx.strokeStyle = `rgba(0,212,255,${(1 - d / 100) * 0.07})`;
-        ctx.lineWidth = 0.4; ctx.stroke();
-      }
+      next.push(p);
     }
+    this.pulses = next;
   }
 }
 

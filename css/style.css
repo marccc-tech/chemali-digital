@@ -249,8 +249,7 @@ strong { color: var(--cyan); font-weight: 600; }
   height: 100%;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.65;
-  mix-blend-mode: screen;
+  opacity: 0.85;
 }
 
 /* ── Navbar ─────────────────────────────────────────────────── */
@@ -773,6 +772,152 @@ strong { color: var(--cyan); font-weight: 600; }
 .ca-label-bottom { bottom: -24px; }
 
 /* ── Services ───────────────────────────────────────────────── */
+/* ── Why You Need a Website ─────────────────────────────────── */
+.why-section {
+  position: relative;
+  z-index: 1;
+  padding: 6rem 6vw 5rem;
+  border-top: 1px solid var(--border);
+}
+.why-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  width: 1px; height: 60px;
+  background: linear-gradient(180deg, var(--cyan), transparent);
+  transform: translateX(-50%);
+  opacity: 0.6;
+}
+
+.why-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 4rem;
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.why-header .sh-tag {
+  font-size: 0.65rem;
+  color: var(--cyan);
+  letter-spacing: 0.22em;
+  margin-bottom: 1rem;
+}
+.why-header .sh-title {
+  font-family: var(--font-head);
+  font-size: clamp(2rem, 3.8vw, 3.6rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+.why-accent {
+  background: linear-gradient(90deg, var(--cyan), #66E8FF);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.why-header .sh-line {
+  width: 60px; height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--orange));
+  margin: 0.25rem 0 1.5rem;
+}
+.why-intro {
+  color: var(--text-2);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 640px;
+}
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.why-card {
+  position: relative;
+  background: linear-gradient(180deg, var(--bg-card), rgba(7, 21, 37, 0.4));
+  border: 1px solid var(--border);
+  padding: 2.25rem 1.75rem 1.75rem;
+  overflow: hidden;
+  transition: border-color 0.35s, transform 0.35s, box-shadow 0.35s, background 0.35s;
+  cursor: none;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+}
+.why-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 30%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--cyan), transparent);
+  transition: width 0.4s ease;
+}
+.why-card:hover {
+  border-color: var(--border-hi);
+  transform: translateY(-5px);
+  background: linear-gradient(180deg, var(--bg-card), rgba(0, 212, 255, 0.04));
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45),
+              0 0 38px rgba(0, 212, 255, 0.07);
+}
+.why-card:hover::before { width: 100%; }
+.why-card.featured {
+  border-color: rgba(0, 212, 255, 0.32);
+  background: linear-gradient(180deg, var(--bg-card), rgba(0, 212, 255, 0.05));
+}
+.why-card.featured::before { width: 60%; }
+
+.why-num {
+  font-size: 0.6rem;
+  color: var(--orange);
+  letter-spacing: 0.18em;
+  margin-bottom: 1.25rem;
+  opacity: 0.85;
+}
+.why-icon-wrap {
+  margin-bottom: 1.25rem;
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  background: rgba(0, 212, 255, 0.03);
+}
+.why-card:hover .why-icon-wrap {
+  border-color: var(--border-hi);
+  background: rgba(0, 212, 255, 0.06);
+}
+.why-card h3 {
+  font-family: var(--font-head);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  margin-bottom: 0.85rem;
+}
+.why-card p {
+  font-size: 0.93rem;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin-bottom: 1.4rem;
+}
+.why-tag {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.22em;
+  color: var(--cyan);
+  border-top: 1px solid var(--border);
+  padding-top: 0.85rem;
+  display: block;
+}
+
 .services {
   padding: 6rem 6vw;
   position: relative;
@@ -1348,6 +1493,8 @@ strong { color: var(--cyan); font-weight: 600; }
 
   .services-grid { grid-template-columns: 1fr; max-width: 500px; }
 
+  .why-grid { grid-template-columns: repeat(2, 1fr); max-width: 720px; }
+
   .cta-section { grid-template-columns: 1fr; }
   .cta-deco { display: none; }
 
@@ -1374,6 +1521,10 @@ strong { color: var(--cyan); font-weight: 600; }
 
   .services { padding: 4rem 1.5rem; }
   .services-grid { gap: 1rem; }
+
+  .why-section { padding: 4rem 1.5rem 3rem; }
+  .why-grid { grid-template-columns: 1fr; max-width: 460px; }
+  .why-card { padding: 2rem 1.5rem 1.5rem; }
 
   .cta-section { margin: 1rem 1.5rem 4rem; padding: 3rem 2rem; }
   .cta-headline { font-size: 2rem; }
