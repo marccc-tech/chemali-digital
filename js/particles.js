@@ -301,11 +301,11 @@ class ParticleSystem {
     switch (this.phase) {
 
       case 'bang':
-        if (this.phaseFrame >= 55) this._setPhase('scatter');
+        if (this.phaseFrame >= 28) this._setPhase('scatter');
         break;
 
       case 'scatter':
-        if (this.phaseFrame >= 60) this._setPhase('assembling');
+        if (this.phaseFrame >= 30) this._setPhase('assembling');
         break;
 
       case 'assembling':
@@ -315,13 +315,13 @@ class ParticleSystem {
         break;
 
       case 'assembled':
-        if (this.phaseFrame >= 90) {   // ~1.5s hold
+        if (this.phaseFrame >= 42) {   // shorter hold (~0.7s)
           this._setPhase('glitching');
         }
         break;
 
       case 'glitching':
-        if (this.phaseFrame >= 45) {   // ~0.75s of glitch
+        if (this.phaseFrame >= 22) {   // ~0.4s of glitch
           // Give text particles an outward burst velocity
           const textPts = this.particles.filter(p => p.text);
           textPts.forEach(p => {
@@ -334,7 +334,7 @@ class ParticleSystem {
           setTimeout(() => {
             this.phase = 'floating';
             if (this.onDone) this.onDone();
-          }, 1400);
+          }, 600);
         }
         break;
     }

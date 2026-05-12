@@ -37,17 +37,17 @@
      1. INTRO SEQUENCE
      ═══════════════════════════════════════════════════════════ */
   function startIntro() {
-    // Tagline typing effect
+    // Tagline typing effect — snappier
     const tagline = 'WEB DESIGN FOR ELECTRICIANS';
     let ti = 0;
     const typeTagline = () => {
       if (ti <= tagline.length) {
         introTagline.textContent = tagline.slice(0, ti) + (ti < tagline.length ? '_' : '');
         ti++;
-        setTimeout(typeTagline, 60);
+        setTimeout(typeTagline, 35);
       }
     };
-    setTimeout(typeTagline, 400);
+    setTimeout(typeTagline, 200);
 
     // Timer
     let seconds = 0;
@@ -58,10 +58,10 @@
       if (timerEl) timerEl.textContent = `00:${s}`;
     }, 1000);
 
-    // Loading bar timed to match assembly (~4.5s total)
+    // Loading bar timed to match shortened intro (~2.4s)
     let pct = 0;
     const fillId = setInterval(() => {
-      pct += 100 / 45; // 45 steps over ~4.5s
+      pct += 100 / 24;
       if (pct >= 100) { pct = 100; clearInterval(fillId); }
       if (introLoadFill) introLoadFill.style.width = pct + '%';
     }, 100);
@@ -73,8 +73,8 @@
       clearInterval(fillId);
       if (introLoadFill) introLoadFill.style.width = '100%';
 
-      // Small pause then transition out
-      setTimeout(() => revealApp(ps), 600);
+      // Tighter pause before transition
+      setTimeout(() => revealApp(ps), 220);
     };
     ps.start();
   }
@@ -260,9 +260,9 @@
   const TERMINAL_LINES = [
     '> INITIALIZING PROFILE...',
     '> ─────────────────────────',
-    '> NAME ........ Marc Chemali',
+    '> STUDIO ...... Chemali Digital',
     '> LOCATION .... Montreal, QC',
-    '> ROLE ........ Web Designer',
+    '> TEAM ........ Designers + Devs',
     '> FOCUS ....... Electrical Industry',
     '> METHOD ...... 100% Custom Code',
     '> TEMPLATES ... 0 (ZERO)',
